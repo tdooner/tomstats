@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'dropbox_sdk'
 require 'net/http'
 require 'uri'
 
