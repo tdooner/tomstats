@@ -12,5 +12,5 @@ module Clockwork
     Clockwork.manager.log "Finished: '#{job}'"
   end
 
-  every(10.seconds, 'sync:dropbox')
+  every(1.hour, 'sync:dropbox')
 end
