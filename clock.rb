@@ -13,4 +13,5 @@ module Clockwork
   end
 
   every(1.hour, 'sync:dropbox')
+  every(12.hours, 'sync:garmin')
 end
