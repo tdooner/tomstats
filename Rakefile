@@ -1,19 +1,14 @@
-require 'active_record'
-require 'date'
+require_relative './environment.rb'
+
 include ActiveRecord::Tasks
 
-DatabaseTasks.database_configuration = Hash.new(url: ENV['DATABASE_URL'])
+DatabaseTasks.database_configuration = Hash.new('url' => ENV['DATABASE_URL'])
 DatabaseTasks.db_dir = 'db'
 DatabaseTasks.migrations_paths = 'db/migrate'
 
-require_relative './lib/dropbox_client.rb'
-require_relative './lib/garmin_scraper.rb'
-require_relative './models/fitness_activity.rb'
-require_relative './models/garmin_dump.rb'
-
 namespace :db do
   task :connect do
-    ActiveRecord::Base.establish_connection
+    ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
   end
 
   task console: :connect do
