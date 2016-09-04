@@ -47,22 +47,6 @@ namespace :sync do
   desc 'Sync garmin activities -> postgres'
   task garmin: 'db:connect' do
     yesterday = Date.today - 1
-    garmin = GarminScraper.new(ENV['GARMIN_USERNAME'], ENV['GARMIN_PASSWORD'])
-    puts 'Logging into Garmin Connect...'
-    garmin.login
-
-    puts '  Downloading sleep data...'
-    sleep_data = garmin.sleep_schedule_json(yesterday)
-    GarminDump
-      .where(dump_type: 'sleep_schedule', date: yesterday)
-      .first_or_create
-      .update_attribute(:data, sleep_data)
-
-    puts '  Downloading wellness data...'
-    wellness = garmin.wellness(yesterday)
-    GarminDump
-      .where(dump_type: 'wellness', date: yesterday)
-      .first_or_create
-      .update_attribute(:data, wellness)
+    GarminDump.create_dumps_for_date(yesterday)
   end
 end
