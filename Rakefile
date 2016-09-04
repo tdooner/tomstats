@@ -49,4 +49,9 @@ namespace :sync do
     yesterday = Date.today - 1
     GarminDump.create_dumps_for_date(yesterday)
   end
+
+  desc 'Backfill garmin'
+  task garmin_backfill: 'db:connect' do
+    GarminDump.create_dumps_for_date(Date.new(2016, 4, 1)..Date.new(2016, 9, 3))
+  end
 end
