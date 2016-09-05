@@ -45,8 +45,43 @@ namespace :sync do
     GarminDump.create_dumps_for_date(yesterday)
   end
 
+  desc 'Sync lastfm -> postgres'
+  task lastfm: 'db:connect' do
+    last_item = LastfmScrobble.order(timestamp: :desc).first
+    created = 0
+    LastfmScraper
+      .new(ENV['LASTFM_API_KEY'])
+      .each_scrobble(after: last_item.timestamp) do |scrobble|
+        created += 1
+        LastfmScrobble.create(
+          timestamp: scrobble['date']['uts'].to_i,
+          data: scrobble
+        )
+      end
+
+    puts "Downloaded #{created} scrobbles."
+  end
+
   desc 'Backfill garmin'
   task garmin_backfill: 'db:connect' do
     GarminDump.create_dumps_for_date(Date.new(2016, 4, 1)..Date.new(2016, 9, 3))
+  end
+
+  desc 'Backfill Lastfm'
+  task lastfm_backfill: 'db:connect' do
+    created = 0
+
+    LastfmScraper
+      .new(ENV['LASTFM_API_KEY'])
+      .each_scrobble do |scrobble|
+        created += 1
+        puts scrobble['date']['#text']
+        LastfmScrobble.create(
+          timestamp: scrobble['date']['uts'].to_i,
+          data: scrobble
+        )
+      end
+
+    puts "Downloaded #{created} scrobbles."
   end
 end
