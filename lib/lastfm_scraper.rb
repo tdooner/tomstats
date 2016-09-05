@@ -34,11 +34,7 @@ class LastfmScraper
         end
 
         parsed = JSON.parse(resp.body)['recenttracks']
-        parsed['track'].each do |scrobble|
-          return if after && scrobble['date']['uts'].to_i <= after
-
-          block.call(scrobble)
-        end
+        parsed['track'].each(&block)
         page += 1
         keep_fetching =
           parsed['@attr']['page'].to_i < parsed['@attr']['totalPages'].to_i
