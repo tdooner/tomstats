@@ -6,7 +6,7 @@ class LastfmScraper
     @apikey = apikey
   end
 
-  def each_scrobble(after: nil, &block)
+  def each_scrobble(to: nil, from: nil, &block)
     return to_enum(:each_scrobble) unless block_given?
     page = 1
     keep_fetching = true
@@ -20,6 +20,9 @@ class LastfmScraper
           format: 'json',
           page: page,
         }
+        params[:from] = from if from
+        params[:to] = to if to
+        puts "Fetching #{page}"
 
         full_uri = API_BASE.dup
         full_uri.query = URI.encode_www_form(params)

@@ -51,7 +51,7 @@ namespace :sync do
     created = 0
     LastfmScraper
       .new(ENV['LASTFM_API_KEY'])
-      .each_scrobble(after: last_item.timestamp) do |scrobble|
+      .each_scrobble(from: last_item.timestamp) do |scrobble|
         created += 1
         LastfmScrobble.create(
           timestamp: scrobble['date']['uts'].to_i,
@@ -73,7 +73,7 @@ namespace :sync do
 
     LastfmScraper
       .new(ENV['LASTFM_API_KEY'])
-      .each_scrobble do |scrobble|
+      .each_scrobble(to: ENV['LASTFM_BACKFILL_TO']) do |scrobble|
         created += 1
         puts scrobble['date']['#text']
         LastfmScrobble.create(
