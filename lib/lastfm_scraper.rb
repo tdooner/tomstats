@@ -22,7 +22,6 @@ class LastfmScraper
         }
         params[:from] = from if from
         params[:to] = to if to
-        puts "Fetching #{page}"
 
         full_uri = API_BASE.dup
         full_uri.query = URI.encode_www_form(params)
