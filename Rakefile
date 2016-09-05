@@ -52,7 +52,7 @@ namespace :sync do
     LastfmScraper
       .new(ENV['LASTFM_API_KEY'])
       .each_scrobble(from: last_item.timestamp) do |scrobble|
-        next if scrobble['@attr']['nowplaying']
+        next if scrobble.fetch('@attr', {})['nowplaying']
         created += 1
         LastfmScrobble.where(
           timestamp: scrobble['date']['uts'].to_i,
