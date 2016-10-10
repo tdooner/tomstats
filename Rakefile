@@ -33,9 +33,13 @@ namespace :sync do
   task dropbox: 'db:connect' do
     dropbox = DropboxClient.new(ENV['DROPBOX_ACCESS_TOKEN'])
     dropbox.list_directory('/Apps/tapiriik').each do |file|
-      FitnessActivity
+      activity = FitnessActivity
         .where(dropbox_rev: file.rev)
         .first_or_create
+
+      if activity.data.blank?
+        activity.update_attribute(:data, file.download)
+      end
     end
   end
 
