@@ -2,6 +2,7 @@ module TagProcessor
   class Processor
     def initialize
       TagProcessor::Base.class_variable_get(:@@processors).each do |processor_klass|
+        puts "Checking processor: #{processor_klass}"
         processor_revision = processor_klass.class_variable_get(:@@revision)
 
         processor_klass.each_model do |model|

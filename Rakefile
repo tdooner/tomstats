@@ -94,6 +94,7 @@ end
 
 namespace :process do
   task tags: 'db:connect' do
+    ActiveRecord::Base.logger = Logger.new(STDERR)
     TagProcessor::Processor.new
   end
 end
