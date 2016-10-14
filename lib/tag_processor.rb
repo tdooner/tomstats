@@ -16,7 +16,7 @@ module TagProcessor
               AND tag_processing_records.source_type = '#{model.name}'
               AND processor = '#{processor_klass.name}'")
             .where(tag_processing_records: { id: nil })
-            .find_each do |record|
+            .find_each(batch_size: 1) do |record|
               $stdout.write "#{processor_klass} (id=#{record.id})... "
 
               tags = Array(processor_klass.process_fitness_activity(record))
