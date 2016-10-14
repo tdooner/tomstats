@@ -94,11 +94,6 @@ end
 
 namespace :process do
   task tags: 'db:connect' do
-    [
-      TagProcessors::ActivityType,
-      TagProcessors::ActivityStartEnd,
-    ].each do |processor|
-      puts processor.process_fitness_activity(FitnessActivity.last)
-    end
+    TagProcessor::Processor.new
   end
 end

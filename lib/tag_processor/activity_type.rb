@@ -1,5 +1,7 @@
-module TagProcessors
-  class ActivityType
+module TagProcessor
+  class ActivityType < Base
+    @@revision = 1
+
     def self.process_fitness_activity(activity)
       type = FitnessActivity.connection.execute(<<-SQL).first['type']
         select

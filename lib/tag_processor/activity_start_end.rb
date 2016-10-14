@@ -1,8 +1,10 @@
 require 'rexml/document'
 require 'rexml/xpath'
 
-module TagProcessors
-  class ActivityStartEnd
+module TagProcessor
+  class ActivityStartEnd < Base
+    @@revision = 2
+
     HOME = [-122.427328, 37.759519, -122.422779, 37.763353]
     BRIGADE = [-122.3967826366, 37.7797886414, -122.3945295811, 37.7814167379]
 
