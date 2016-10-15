@@ -68,6 +68,39 @@ namespace :sync do
     puts "Downloaded #{created} scrobbles."
   end
 
+  desc 'Sync daily spreadsheet -> postgres'
+  task daily: 'db:connect' do
+    require 'csv'
+    require 'date'
+    require 'open-uri'
+
+    count = DailySpreadsheetEntry.count
+
+    open(ENV['DAILY_TRACKING_URL']) do |f|
+      CSV.parse(f.read, col_sep: "\t", headers: :first_row) do |row|
+        date = DateTime.strptime(row['Timestamp'], '%m/%d/%Y %T')
+        if date.hour <= 12
+          date = date - 1
+        end
+
+        [
+          ['How was today? [Good]', :how_good],
+          ['How was today? [Unique]', :how_unique],
+          ['How was today? [Productive]', :how_productive],
+          ['Who did you hang out with?', :hung_out_with],
+          ['How many glasses of alcohol today?', :glasses_alcohol],
+        ].each do |col, type|
+          entry = DailySpreadsheetEntry
+                    .where(date: date.to_date, entry_type: type)
+                    .first_or_create
+          entry.update_attributes(value: row[col])
+        end
+      end
+    end
+
+    puts "Imported #{DailySpreadsheetEntry.count - count} entries from daily spreadsheet."
+  end
+
   desc 'Backfill garmin'
   task garmin_backfill: 'db:connect' do
     GarminDump.create_dumps_for_date(Date.new(2016, 4, 1)..Date.new(2016, 9, 3))
