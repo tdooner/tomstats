@@ -25,8 +25,8 @@ class GarminScraper
     auth_cookie = 'ST-0' + auth_cookie[4..-1]
 
     @agent.get("https://connect.garmin.com/post-auth/login?ticket=#{auth_cookie}") do |page|
-      if !page.link_with(text: /Sign Out/)
-        raise 'Login failed -- no "Sign Out" link detected'
+      if !page.title =~ /Garmin Connect/
+        raise 'Login failed -- destination page title is not "Garmin Connect"'
       end
     end
 
