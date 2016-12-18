@@ -79,7 +79,12 @@ namespace :sync do
 
     open(ENV['DAILY_TRACKING_URL']) do |f|
       CSV.parse(f.read, col_sep: "\t", headers: :first_row) do |row|
-        date = DateTime.strptime(row['Timestamp'], '%m/%d/%Y %T')
+        date = if row['Timestamp'].include?(' ')
+                 DateTime.strptime(row['Timestamp'], '%m/%d/%Y %T')
+               else
+                 DateTime.strptime(row['Timestamp'], '%m/%d/%Y')
+               end
+
         if date.hour <= 12
           date = date - 1
         end
