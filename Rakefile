@@ -104,7 +104,14 @@ namespace :sync do
 
   desc 'Backfill garmin'
   task garmin_backfill: 'db:connect' do
-    GarminDump.create_dumps_for_date(Date.new(2016, 4, 1)..Date.new(2016, 9, 3))
+    GarminDump
+      .order(:date)
+      .pluck(:date)
+      .each_cons(2) do |date1, date2|
+        # TODO: handle case where the dates are incomplete (have one type of
+        # data but not the other)
+        GarminDump.create_dumps_for_date(date1.succ...date2)
+      end
   end
 
   desc 'Backfill Lastfm'
