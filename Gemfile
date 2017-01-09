@@ -6,6 +6,7 @@ gem 'dotenv'
 gem 'mechanize'
 gem 'pg'
 gem 'rake'
+gem 'sinatra'
 
 group :development do
   gem 'pry'
