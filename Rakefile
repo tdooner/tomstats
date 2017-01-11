@@ -140,6 +140,8 @@ end
 
 namespace :process do
   task tags: 'db:connect' do
-    TagProcessor::Processor.new
+    processor = TagProcessor::Processor.new
+    processor.discover_processors('./lib/tag_processor')
+    processor.process(logger: Logger.new($stderr))
   end
 end

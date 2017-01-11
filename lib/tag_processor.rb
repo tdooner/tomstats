@@ -1,7 +1,43 @@
+require 'active_support/core_ext/string/inflections'
+
 module TagProcessor
+  class Base
+    @@models = [
+      ['FitnessActivity', :process_fitness_activity],
+    ]
+
+    def self.each_model(&block)
+      @@models.each do |name, method|
+        klass = const_get(name)
+        block.call(klass) if respond_to?(method)
+      end
+    end
+  end
+
   class Processor
     def initialize
-      TagProcessor::Base.class_variable_get(:@@processors).each do |processor_klass|
+      @processors = []
+    end
+
+    def discover_processors(directory)
+      Dir[File.join(directory, '*.rb')].each do |file|
+        class_name = File.basename(file, '.rb').classify
+
+        begin
+          require file
+          klass = TagProcessor.const_get(class_name)
+        rescue NameError
+          raise 'Expected #{file} to define TagProcessor::#{class_name}.'
+        end
+
+        @processors << klass
+      end
+    end
+
+    def process(logger: Logger.new('/dev/null'))
+      logger.debug "Processing #{@processors.length} processors: #{@processors.inspect}"
+
+      @processors.each do |processor_klass|
         processor_revision = processor_klass.class_variable_get(:@@revision)
 
         processor_klass.each_model do |model|
@@ -17,7 +53,7 @@ module TagProcessor
               AND processor = '#{processor_klass.name}'")
             .where(tag_processing_records: { id: nil })
             .find_each(batch_size: 1) do |record|
-              $stdout.write "#{processor_klass} (id=#{record.id})... "
+              logger.debug "#{processor_klass} (id=#{record.id})... "
 
               tags = Array(processor_klass.process_fitness_activity(record))
               tags = [nil] if tags.empty?
@@ -33,7 +69,7 @@ module TagProcessor
                 end
               end
 
-              $stdout.puts "done\t\t#{tags.length - tags.count(&:nil?)} tags"
+              logger.debug "done\t\t#{tags.length - tags.count(&:nil?)} tags"
             end
         end
       end
