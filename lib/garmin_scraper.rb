@@ -1,8 +1,10 @@
-require 'mechanize'
 require 'json'
 
 class GarminScraper
   def initialize(username, password)
+    # lazy-load mechanize to save on boot-time
+    require 'mechanize'
+
     @username = username
     @password = password
     @agent = Mechanize.new
