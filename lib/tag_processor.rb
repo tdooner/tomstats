@@ -14,9 +14,11 @@ module TagProcessor
     end
   end
 
+  # TODO: name this something else since Processor here describes two different
+  # things.
   class Processor
-    def initialize
-      @processors = []
+    def initialize(processors: [])
+      @processors = processors
     end
 
     def discover_processors(directory)
@@ -27,7 +29,7 @@ module TagProcessor
           require file
           klass = TagProcessor.const_get(class_name)
         rescue NameError
-          raise 'Expected #{file} to define TagProcessor::#{class_name}.'
+          raise "Expected #{file} to define TagProcessor::#{class_name}."
         end
 
         @processors << klass

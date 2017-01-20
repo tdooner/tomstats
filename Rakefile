@@ -2,6 +2,9 @@ require_relative './environment.rb'
 
 include ActiveRecord::Tasks
 
+ActiveRecord::Base.configurations = {
+  ENV['RAILS_ENV'] || 'development' => { 'url' => ENV['DATABASE_URL'] }
+}
 DatabaseTasks.database_configuration = Hash.new('url' => ENV['DATABASE_URL'])
 DatabaseTasks.db_dir = 'db'
 DatabaseTasks.migrations_paths = 'db/migrate'
