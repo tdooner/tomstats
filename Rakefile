@@ -148,3 +148,9 @@ namespace :process do
     processor.process(logger: Logger.new($stderr))
   end
 end
+
+namespace :generate do
+  task all: 'db:connect' do
+    Builder::DateHistogram.build
+  end
+end

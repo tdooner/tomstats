@@ -21,5 +21,6 @@ require_relative './models/lastfm_scrobble.rb'
 require_relative './models/tag_processing_record.rb'
 
 autoload :TagProcessor, 'tag_processor.rb'
+autoload :Builder, 'builder.rb'
 
 Dotenv.load(".env.#{ENV['RAILS_ENV']}", '.env')
