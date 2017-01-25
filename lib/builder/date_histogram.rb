@@ -2,7 +2,7 @@ require 'json'
 
 module Builder
   class DateHistogram
-    DEFAULT_OUTPUT = File.expand_path('../../../build/date_histogram.json', __FILE__)
+    DEFAULT_OUTPUT = File.expand_path('../../../build/data/date_histogram.json', __FILE__)
 
     def self.build(output = DEFAULT_OUTPUT)
       File.open(output, 'w') do |f|
