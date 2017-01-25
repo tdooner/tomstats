@@ -4,6 +4,10 @@ require 'dotenv'
 
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
+Raven.configure do
+  config.dsn = ENV['SENTRY_DSN'] if ENV['SENTRY_DSN']
+end
+
 require_relative './lib/dropbox_client.rb'
 require_relative './lib/garmin_scraper.rb'
 require_relative './lib/lastfm_scraper.rb'

@@ -7,6 +7,7 @@ gem 'dotenv'
 gem 'mechanize'
 gem 'pg'
 gem 'rake'
+gem 'sentry-raven'
 gem 'sinatra'
 
 group :development do
