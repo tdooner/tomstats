@@ -6,7 +6,7 @@ require 'sentry-raven'
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
 if ENV['SENTRY_DSN']
-  Raven.configure do
+  Raven.configure do |config|
     config.dsn = ENV['SENTRY_DSN']
   end
 end
