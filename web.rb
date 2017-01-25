@@ -5,13 +5,15 @@ require 'sinatra/reloader' if development?
 
 ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
-get '/health' do
-  [
-    DailySpreadsheetEntry,
-    FitnessActivity,
-    GarminDump,
-    LastfmScrobble,
-  ].map do |model|
-    [model.name, model.last.date]
-  end.to_json
+set :public_folder, 'build/'
+
+get '/' do
+  <<-HTML
+  <html>
+    <body>
+      <div id='app'></div>
+      <script type='text/javascript' src='js/DateHistogram.bundle.js'></script>
+    </body>
+  </html>
+  HTML
 end
