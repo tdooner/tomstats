@@ -154,3 +154,10 @@ namespace :generate do
     Builder::DateHistogram.build
   end
 end
+
+namespace :assets do
+  task :precompile do
+    puts 'Compiling webpack...'
+    `node_modules/.bin/webpack`
+  end
+end

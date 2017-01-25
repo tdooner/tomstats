@@ -1,0 +1,21 @@
+{
+  "name": "tomstats",
+  "version": "1.0.0",
+  "description": "Stats about my life",
+  "main": "web/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tdooner/tomstats.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/tdooner/tomstats/issues"
+  },
+  "homepage": "https://github.com/tdooner/tomstats#readme",
+  "dependencies": {
+    "webpack": "^1.14.0"
+  }
+}
