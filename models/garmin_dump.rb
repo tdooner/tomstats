@@ -1,4 +1,6 @@
 class GarminDump < ActiveRecord::Base
+  scope :last_365_days, -> { where('date > ?', Date.today - 365) }
+
   def self.create_dumps_for_date(date_or_range)
     range = date_or_range.is_a?(Range) ? date_or_range : (date_or_range..date_or_range)
     return if range.none?
