@@ -1,11 +1,14 @@
 require 'active_record'
 require 'date'
 require 'dotenv'
+require 'sentry-raven'
 
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
-Raven.configure do
-  config.dsn = ENV['SENTRY_DSN'] if ENV['SENTRY_DSN']
+if ENV['SENTRY_DSN']
+  Raven.configure do
+    config.dsn = ENV['SENTRY_DSN']
+  end
 end
 
 require_relative './lib/dropbox_client.rb'
