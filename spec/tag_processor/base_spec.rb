@@ -21,11 +21,12 @@ describe TagProcessor::Processor do
     end
 
     describe '#process' do
-      it 'calls .process_fitness_activity if applicable' do
-        # TODO: use fixtures or a generator here
+      it 'calls .process_fitness_activity once' do
         activity = FitnessActivity.create(dropbox_rev: '123', data: '<!-- todo xml -->')
         expect(processor_klass).to receive(:process_fitness_activity).with(activity).once
         processor.process
+        processor.process
+        expect(TagProcessingRecord.count).to eq(1)
       end
     end
   end
