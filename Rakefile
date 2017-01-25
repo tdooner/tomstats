@@ -157,7 +157,11 @@ end
 
 namespace :assets do
   task :precompile do
+    puts 'Running rake generate:all...'
+    Rake::Task['generate:all'].invoke
+
     puts 'Compiling webpack...'
     `node_modules/.bin/webpack`
+    exit 1 unless $?.exitstatus == 0
   end
 end
