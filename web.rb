@@ -1,6 +1,7 @@
 require_relative './environment.rb'
 
 require 'sinatra'
+require 'sinatra/reloader' if development?
 
 ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 

@@ -9,6 +9,7 @@ gem 'pg'
 gem 'rake'
 gem 'sentry-raven'
 gem 'sinatra'
+gem 'sinatra-contrib'
 
 group :development do
   gem 'pry'
