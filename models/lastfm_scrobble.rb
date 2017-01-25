@@ -1,5 +1,9 @@
 class LastfmScrobble < ActiveRecord::Base
-  def date
-    Time.at(timestamp).to_date
+  before_save :update_date
+
+  private
+
+  def update_date
+    self.date = Time.at(timestamp).to_date
   end
 end
