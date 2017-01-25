@@ -1,3 +1,25 @@
 #!/bin/bash
 set -euo pipefail
-flynn pg dump | (dropdb tomstats; createdb tomstats; pg_restore -O -d tomstats)
+backup() {
+  flynn pg dump
+}
+
+restore() {
+  dropdb tomstats
+  createdb tomstats
+  pg_restore -O -d tomstats
+}
+
+case ${1:-''} in
+  --save)
+    backup > production.sql
+    echo "Saved to production.sql. Use \`$0 --restore\` to restore."
+    ;;
+  --restore)
+    cat production.sql | restore
+    ;;
+  *)
+    echo "Downloading and loading production data..."
+    backup | restore
+    ;;
+esac
