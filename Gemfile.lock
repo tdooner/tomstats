@@ -25,9 +25,11 @@ GEM
     dotenv (2.1.1)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
+    hkdf (0.3.0)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     i18n (0.7.0)
+    jwt (1.5.6)
     mechanize (2.7.5)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0)
@@ -97,6 +99,9 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
+    webpush (0.3.1)
+      hkdf (~> 0.2)
+      jwt
     webrobots (0.1.2)
 
 PLATFORMS
@@ -115,6 +120,7 @@ DEPENDENCIES
   sentry-raven
   sinatra
   sinatra-contrib
+  webpush
 
 BUNDLED WITH
    1.13.6

@@ -2,6 +2,7 @@ require_relative './environment.rb'
 
 require 'sinatra'
 require 'sinatra/reloader' if development?
+require 'webpush'
 
 ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
@@ -12,12 +13,69 @@ get '/api/date_histogram' do
   body Builder::DateHistogram.new.tap(&:calculate).to_json
 end
 
+post '/send_notification' do
+  PushNotificationSubscriber.find_each do |subscription|
+    begin
+      Webpush.payload_send(
+        endpoint: subscription.endpoint,
+        message: 'hello tom',
+        p256dh: subscription.p256dh,
+        auth: subscription.auth,
+        vapid: {
+          subject: 'mailto:tomdooner@gmail.com',
+          public_key: ENV['VAPID_PUBLIC_KEY'],
+          private_key: ENV['VAPID_PRIVATE_KEY'],
+        }
+      )
+    rescue Webpush::InvalidSubscription
+      $stderr.puts 'Webhook subscription expired, deleting.'
+      subscription.delete
+    end
+  end
+end
+
+# TODO: figure out a better way to do this than mirroring the JS in this folder
+# as well. (This is necessary for URL-scoped ServiceWorker permissions scheme,
+# but should be avoidable if we can serve the JS with a
+#   Service-Worker-Allowed: /
+# header.
+get '/notifications/NotifierServiceWorker.bundle.js' do
+  headers 'Content-Type' => 'text/javascript'
+  File.read('./build/js/NotifierServiceWorker.bundle.js')
+end
+
+post '/notifications/register' do
+  subscription = JSON.parse(request.body.read)
+
+  PushNotificationSubscriber
+    .where(endpoint: subscription['endpoint'])
+    .first_or_initialize
+    .update_attributes(
+      auth: subscription['keys']['auth'],
+      p256dh: subscription['keys']['p256dh'],
+    )
+end
+
+get '/notifications/register' do
+  <<-HTML
+  <html>
+    <head>
+      <link rel='manifest' href='/manifest.json' />
+    </head>
+    <body>
+      <div id='app'></div>
+      <script type='text/javascript' src='/js/Notifier.bundle.js'></script>
+    </body>
+  </html>
+  HTML
+end
+
 get '/' do
   <<-HTML
   <html>
     <body>
       <div id='app'></div>
-      <script type='text/javascript' src='js/DateHistogram.bundle.js'></script>
+      <script type='text/javascript' src='/js/DateHistogram.bundle.js'></script>
     </body>
   </html>
   HTML

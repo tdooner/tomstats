@@ -22,5 +22,6 @@ require_relative './models/tag_processing_record.rb'
 
 autoload :TagProcessor, 'tag_processor.rb'
 autoload :Builder, 'builder.rb'
+autoload :PushNotificationSubscriber, './models/push_notification_subscriber.rb'
 
 Dotenv.load(".env.#{ENV['RAILS_ENV']}", '.env')

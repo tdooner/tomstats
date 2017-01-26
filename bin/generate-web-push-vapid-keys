@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+// vim: ft=javascript
+const webpush = require('web-push');
+const atob = require('atob');
+
+const vapidKeys = webpush.generateVAPIDKeys();
+console.log(`applicationServerKey: [${urlBase64ToUint8Array(vapidKeys.publicKey)}]`);
+console.log(`VAPID_PUBLIC_KEY: ${vapidKeys.publicKey}`);
+console.log(`VAPID_PRIVATE_KEY: ${vapidKeys.privateKey}`);

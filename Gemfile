@@ -10,6 +10,7 @@ gem 'rake'
 gem 'sentry-raven'
 gem 'sinatra'
 gem 'sinatra-contrib'
+gem 'webpush'
 
 group :development do
   gem 'pry'

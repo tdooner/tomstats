@@ -18,5 +18,9 @@
   "dependencies": {
     "d3": "^4.4.4",
     "webpack": "^1.14.0"
+  },
+  "devDependencies": {
+    "atob": "^2.0.3",
+    "web-push": "^3.2.1"
   }
 }
