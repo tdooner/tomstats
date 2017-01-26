@@ -151,7 +151,7 @@ end
 
 namespace :generate do
   task all: 'db:connect' do
-    Builder::DateHistogram.build
+    Builder::DateHistogram.new.tap(&:calculate).tap(&:save)
   end
 end
 

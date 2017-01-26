@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/tdooner/tomstats#readme",
   "dependencies": {
+    "d3": "^4.4.4",
     "webpack": "^1.14.0"
   }
 }

@@ -7,6 +7,11 @@ ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
 set :public_folder, 'build/'
 
+get '/api/date_histogram' do
+  headers 'Content-Type' => 'application/json'
+  body Builder::DateHistogram.new.tap(&:calculate).to_json
+end
+
 get '/' do
   <<-HTML
   <html>
