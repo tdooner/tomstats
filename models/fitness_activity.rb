@@ -11,6 +11,10 @@ class FitnessActivity < ActiveRecord::Base
 
   def update_date
     doc = REXML::Document.new(data, ignore_whitespace_nodes: :all)
-    self.date = Date.parse(REXML::XPath.match(doc, '//Activity/Id')[0].text)
+    id = REXML::XPath.match(doc, '//Activity/Id')[0]
+
+    return unless id
+
+    self.date = Date.parse(id.text)
   end
 end
