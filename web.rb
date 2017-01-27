@@ -18,24 +18,7 @@ get '/api/date_histogram' do
 end
 
 post '/send_notification' do
-  PushNotificationSubscriber.find_each do |subscription|
-    begin
-      Webpush.payload_send(
-        endpoint: subscription.endpoint,
-        message: 'hello tom',
-        p256dh: subscription.p256dh,
-        auth: subscription.auth,
-        vapid: {
-          subject: 'mailto:tomdooner@gmail.com',
-          public_key: ENV['VAPID_PUBLIC_KEY'],
-          private_key: ENV['VAPID_PRIVATE_KEY'],
-        }
-      )
-    rescue Webpush::InvalidSubscription
-      $stderr.puts 'Webhook subscription expired, deleting.'
-      subscription.delete
-    end
-  end
+  MessageSender.send_test_notification
 end
 
 # TODO: figure out a better way to do this than mirroring the JS in this folder
