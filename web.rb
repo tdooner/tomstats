@@ -31,6 +31,7 @@ end
 # header.
 get '/notifications/NotifierServiceWorker.bundle.js' do
   headers 'Content-Type' => 'text/javascript'
+  cache_control :private
   File.read('build/js/' + asset_filename('NotifierServiceWorker'))
 end
 
