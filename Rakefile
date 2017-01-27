@@ -161,7 +161,7 @@ namespace :assets do
     Rake::Task['generate:all'].invoke
 
     puts 'Compiling webpack...'
-    `rm build/js/*.js && node_modules/.bin/webpack`
+    `node_modules/.bin/webpack`
     exit 1 unless $?.exitstatus == 0
   end
 end
