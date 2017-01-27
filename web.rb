@@ -2,7 +2,6 @@ require_relative './environment.rb'
 
 require 'sinatra'
 require 'sinatra/reloader' if development?
-require 'webpush'
 
 ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 

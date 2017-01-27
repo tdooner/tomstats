@@ -1,3 +1,5 @@
+require 'webpush'
+
 class MessageSender
   def self.send_test_notification
     self.send("This is a test notification at #{Time.now}")
