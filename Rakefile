@@ -107,6 +107,15 @@ namespace :sync do
       end
     end
 
+    begin
+      Timeout.timeout(30) do
+        MessageSender.send_daily_update
+      end
+    rescue => ex
+      puts "Error sending daily update: #{ex.inspect}"
+      Raven.capture_exception(ex)
+    end
+
     puts "Imported #{DailySpreadsheetEntry.count - count} entries from daily spreadsheet."
   end
 
