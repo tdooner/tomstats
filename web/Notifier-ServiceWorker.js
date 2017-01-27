@@ -1,5 +1,5 @@
 self.addEventListener('push', event => {
-  event.waitUntil(self.registration.showNotification('message received', {
-    body: 'body here',
+  event.waitUntil(self.registration.showNotification('TomStats Message', {
+    body: event.data.text(),
   }));
 });

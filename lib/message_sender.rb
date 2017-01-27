@@ -18,6 +18,8 @@ class MessageSender
       begin
         Webpush.payload_send(
           endpoint: subscription.endpoint,
+          # TODO: convert message to JSON to allow for custom
+          # header/icon/actions
           message: message,
           p256dh: subscription.p256dh,
           auth: subscription.auth,
