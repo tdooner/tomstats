@@ -8,8 +8,10 @@ const attemptSubscribe = (registration) => {
     // show a prompt I guess
   }
 
+  const key = process.env.VAPID_PUBLIC_KEY_BYTES;
+
   registration.pushManager.subscribe({
-    applicationServerKey: new Uint8Array(process.env.VAPID_PUBLIC_KEY_BYTES),
+    applicationServerKey: new Uint8Array(key),
     userVisibleOnly: true,
   })
     .then(subscription => {
