@@ -8,6 +8,10 @@ ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
 set :public_folder, 'build/'
 
+error do
+  Raven.capture_exception(env['sinatra.error'])
+end
+
 def asset_filename(entry_name)
   JSON.parse(File.read('build/assets.json'))[entry_name]['js']
 end
