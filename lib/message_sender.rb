@@ -17,6 +17,7 @@ class MessageSender
     PushNotificationSubscriber.find_each do |subscription|
       begin
         Webpush.payload_send(
+          endpoint: subscription.endpoint,
           message: message,
           p256dh: subscription.p256dh,
           auth: subscription.auth,
