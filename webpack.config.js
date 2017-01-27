@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const AssetsPlugin = require('assets-webpack-plugin');
 
 module.exports = {
   context: __dirname,
@@ -9,7 +10,7 @@ module.exports = {
   },
   output: {
     path: __dirname + '/build/js',
-    filename: "[name].bundle.js",
+    filename: "[name]-[hash].bundle.js",
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -22,5 +23,6 @@ module.exports = {
         211, 177, 243, 68
       ]),
     }),
+    new AssetsPlugin({ filename: 'build/assets.json' }),
   ],
 };

@@ -8,6 +8,10 @@ ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
 set :public_folder, 'build/'
 
+def asset_filename(entry_name)
+  JSON.parse(File.read('build/assets.json'))[entry_name]['js']
+end
+
 get '/api/date_histogram' do
   headers 'Content-Type' => 'application/json'
   body Builder::DateHistogram.new.tap(&:calculate).to_json
@@ -41,7 +45,7 @@ end
 # header.
 get '/notifications/NotifierServiceWorker.bundle.js' do
   headers 'Content-Type' => 'text/javascript'
-  File.read('./build/js/NotifierServiceWorker.bundle.js')
+  File.read('build/js/' + asset_filename('NotifierServiceWorker'))
 end
 
 post '/notifications/register' do
@@ -64,7 +68,7 @@ get '/notifications/register' do
     </head>
     <body>
       <div id='app'></div>
-      <script type='text/javascript' src='/js/Notifier.bundle.js'></script>
+      <script type='text/javascript' src='/js/#{asset_filename('Notifier')}'></script>
     </body>
   </html>
   HTML
@@ -75,7 +79,7 @@ get '/' do
   <html>
     <body>
       <div id='app'></div>
-      <script type='text/javascript' src='/js/DateHistogram.bundle.js'></script>
+      <script type='text/javascript' src='/js/#{asset_filename('DateHistogram')}'></script>
     </body>
   </html>
   HTML
