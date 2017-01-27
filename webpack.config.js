@@ -10,7 +10,7 @@ module.exports = {
   },
   output: {
     path: __dirname + '/build/js',
-    filename: "[name]-[hash].bundle.js",
+    filename: "[name]-[chunkhash].bundle.js",
   },
   plugins: [
     new webpack.DefinePlugin({
