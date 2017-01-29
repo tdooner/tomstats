@@ -5,6 +5,7 @@ load 'Rakefile'
 
 module Clockwork
   handler do |job|
+    Rake::Task[job].reenable
     Rake::Task[job].invoke
   end
 
