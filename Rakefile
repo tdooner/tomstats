@@ -42,7 +42,6 @@ namespace :sync do
     logger.info 'Processing Phone Usage History...'
     processed = PhoneUsageHistory.distinct(:csv_name).pluck(:csv_name)
     dropbox.list_directory('/Apps/usage history').each do |file|
-      require 'pry'; binding.pry
       next if processed.include?(file.name)
 
       logger.info "  downloading/processing #{file.name}..."
