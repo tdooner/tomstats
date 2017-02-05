@@ -24,5 +24,6 @@ autoload :TagProcessor, 'tag_processor.rb'
 autoload :Builder, 'builder.rb'
 autoload :PushNotificationSubscriber, './models/push_notification_subscriber.rb'
 autoload :MessageSender, 'message_sender.rb'
+autoload :PhoneUsageHistory, './models/phone_usage_history.rb'
 
 Dotenv.load(".env.#{ENV['RAILS_ENV']}", '.env')

@@ -34,8 +34,52 @@ end
 namespace :sync do
   desc 'Sync dropbox fitness activities -> postgres'
   task dropbox: 'db:connect' do
+    require 'csv'
+    logger = Logger.new($stderr)
     dropbox = DropboxClient.new(ENV['DROPBOX_ACCESS_TOKEN'])
+
+    # Process Phone Usage History files located in `/Apps/usage history`
+    logger.info 'Processing Phone Usage History...'
+    processed = PhoneUsageHistory.distinct(:csv_name).pluck(:csv_name)
+    dropbox.list_directory('/Apps/usage history').each do |file|
+      require 'pry'; binding.pry
+      next if processed.include?(file.name)
+
+      logger.info "  downloading/processing #{file.name}..."
+      csv = file.download
+      PhoneUsageHistory.transaction do
+        CSV.parse(csv, headers: :first_row).each do |row|
+          # there are a couple crappy extra rows at the bottom of the exported
+          # CSV :(
+          next if row['App name'].length == 0 || row['App name'].include?(',')
+
+          duration = row['Duration'].split(':')
+
+          if duration.length == 2
+            hours = 0
+            minutes, seconds = duration
+          elsif duration.length == 3
+            hours, minutes, seconds = duration
+          else
+            raise "Unknown duration value: #{row['Duration']}"
+          end
+
+          PhoneUsageHistory
+            .create_with(csv_name: file.name)
+            .where(
+              name: row['App name'],
+              date: Date.strptime(row['Date'], "%m/%d/%y"),
+              time: Time.strptime(row['Time'], "%l:%M:%S %p"),
+              duration: "#{hours} hours #{minutes} minutes #{seconds} seconds",
+            )
+            .first_or_create
+        end
+      end
+    end
+
+    logger.info 'Processing Fitness activities...'
     dropbox.list_directory('/Apps/tapiriik').each do |file|
+      logger.info "  downloading #{file.name}..."
       activity = FitnessActivity
         .where(dropbox_rev: file.rev)
         .first_or_create
