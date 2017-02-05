@@ -14,6 +14,7 @@ module Builder
         FitnessActivity,
         GarminDump,
         LastfmScrobble,
+        PhoneUsageHistory,
       ].each_with_object({}) do |model, hash|
         hash[model.table_name] = model.last_365_days.group(:date).count
       end

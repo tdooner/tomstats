@@ -15,9 +15,16 @@ def asset_filename(entry_name)
   JSON.parse(File.read('build/assets.json'))[entry_name]['js']
 end
 
-get '/api/date_histogram' do
-  headers 'Content-Type' => 'application/json'
-  body Builder::DateHistogram.new.tap(&:calculate).to_json
+get '/api/builder/:type' do
+  begin
+    klass = Builder.const_get(params[:type])
+    instance = klass.new
+    return not_found unless instance.respond_to?(:calculate)
+    headers 'Content-Type' => 'application/json'
+    body instance.tap(&:calculate).to_json
+  rescue NameError
+    not_found
+  end
 end
 
 post '/send_notification' do

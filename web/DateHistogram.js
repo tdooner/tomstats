@@ -61,5 +61,5 @@ const render = (data) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  d3.json('/api/date_histogram').get(render);
+  d3.json('/api/builder/DateHistogram').get(render);
 });
