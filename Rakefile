@@ -78,12 +78,12 @@ namespace :sync do
 
     logger.info 'Processing Fitness activities...'
     dropbox.list_directory('/Apps/tapiriik').each do |file|
-      logger.info "  downloading #{file.name}..."
       activity = FitnessActivity
         .where(dropbox_rev: file.rev)
         .first_or_create
 
       if activity.data.blank?
+        logger.info "  downloading #{file.name}..."
         activity.update_attribute(:data, file.download)
       end
     end
