@@ -6,7 +6,8 @@ module.exports = {
   entry: {
     DateHistogram: './web/DateHistogram.js',
     Notifier: './web/Notifier.js',
-    NotifierServiceWorker: './web/Notifier-ServiceWorker.js'
+    NotifierServiceWorker: './web/Notifier-ServiceWorker.js',
+    PhoneHistory: './web/PhoneHistory.js'
   },
   output: {
     path: __dirname + '/build/js',

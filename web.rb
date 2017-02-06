@@ -68,6 +68,17 @@ get '/notifications/register' do
   HTML
 end
 
+get '/facebook' do
+  <<-HTML
+  <html>
+    <body>
+      <div id='app'></div>
+      <script type='text/javascript' src='/js/#{asset_filename('PhoneHistory')}'></script>
+    </body>
+  </html>
+  HTML
+end
+
 get '/' do
   <<-HTML
   <html>
