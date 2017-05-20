@@ -2,10 +2,22 @@
 ENV['RAILS_ENV'] = 'test'
 
 require_relative '../environment.rb'
+require 'database_cleaner'
 
-ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
 RSpec.configure do |config|
+  config.before(:suite) do
+    raise 'No DATABASE_TEST_URL Provided' unless ENV['DATABASE_TEST_URL']
+
+    ActiveRecord::Base.establish_connection(ENV['DATABASE_TEST_URL'])
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation, pre_count: true)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning { example.run }
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

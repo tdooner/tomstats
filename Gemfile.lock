@@ -19,6 +19,7 @@ GEM
       tzinfo
     coderay (1.1.0)
     concurrent-ruby (1.0.2)
+    database_cleaner (1.6.1)
     diff-lcs (1.2.5)
     domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
@@ -112,6 +113,7 @@ DEPENDENCIES
   activerecord
   activesupport
   clockwork
+  database_cleaner
   dotenv
   mechanize
   pg

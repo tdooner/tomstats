@@ -1,17 +1,23 @@
+require 'csv'
+require 'date'
+require 'open-uri'
+require 'zlib' # Needed by ActiveRecord for some reason
+
 require_relative './environment.rb'
 
 include ActiveRecord::Tasks
 
 ActiveRecord::Base.configurations = {
-  ENV['RAILS_ENV'] || 'development' => { 'url' => ENV['DATABASE_URL'] }
+  'development' => { 'url' => ENV['DATABASE_URL'] },
+  'test' => { 'url' => ENV['DATABASE_TEST_URL'] },
 }
-DatabaseTasks.database_configuration = Hash.new('url' => ENV['DATABASE_URL'])
+DatabaseTasks.database_configuration = ActiveRecord::Base.configurations
 DatabaseTasks.db_dir = 'db'
 DatabaseTasks.migrations_paths = 'db/migrate'
 
 namespace :db do
   task :connect do
-    ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+    ActiveRecord::Base.establish_connection(ENV['RAILS_ENV'].to_sym)
   end
 
   task console: :connect do
@@ -21,12 +27,11 @@ namespace :db do
 
   desc 'Create database'
   task :create do
-    DatabaseTasks.create_current(ENV['RAILS_ENV'] || 'development')
+    DatabaseTasks.create_all
   end
 
   desc 'Migrate database'
   task migrate: :connect do
-    require 'zlib' # Needed by ActiveRecord for some reason
     DatabaseTasks.migrate
   end
 end
@@ -34,58 +39,25 @@ end
 namespace :sync do
   desc 'Sync dropbox fitness activities -> postgres'
   task dropbox: 'db:connect' do
-    require 'csv'
     logger = Logger.new($stderr)
+
     dropbox = DropboxClient.new(ENV['DROPBOX_ACCESS_TOKEN'])
 
-    # Process Phone Usage History files located in `/Apps/usage history`
-    logger.info 'Processing Phone Usage History...'
-    processed = PhoneUsageHistory.distinct(:csv_name).pluck(:csv_name)
-    dropbox.list_directory('/Apps/usage history').each do |file|
-      next if processed.include?(file.name)
+    logger.info "Processing PhoneUsageHistory..."
+    PhoneUsageHistory.atomically_process_files_in(dropbox, '/Apps/usage history') do |file|
+      logger.info "  -> #{file.name}"
 
-      logger.info "  downloading/processing #{file.name}..."
-      csv = file.download
-      PhoneUsageHistory.transaction do
-        CSV.parse(csv, headers: :first_row).each do |row|
-          # there are a couple crappy extra rows at the bottom of the exported
-          # CSV :(
-          next if row['App name'].length == 0 || row['App name'].include?(',')
-
-          duration = row['Duration'].split(':')
-
-          if duration.length == 2
-            hours = 0
-            minutes, seconds = duration
-          elsif duration.length == 3
-            hours, minutes, seconds = duration
-          else
-            raise "Unknown duration value: #{row['Duration']}"
-          end
-
-          PhoneUsageHistory
-            .create_with(csv_name: file.name)
-            .where(
-              name: row['App name'],
-              date: Date.strptime(row['Date'], "%m/%d/%y"),
-              time: Time.strptime(row['Time'], "%l:%M:%S %p"),
-              duration: "#{hours} hours #{minutes} minutes #{seconds} seconds",
-            )
-            .first_or_create
-        end
+      CSV.parse(file.download, headers: :first_row).each do |row|
+        PhoneUsageHistory
+          .where(file_name: file.name)
+          .create_from_row(row)
       end
     end
 
-    logger.info 'Processing Fitness activities...'
-    dropbox.list_directory('/Apps/tapiriik').each do |file|
-      activity = FitnessActivity
-        .where(dropbox_rev: file.rev)
-        .first_or_create
-
-      if activity.data.blank?
-        logger.info "  downloading #{file.name}..."
-        activity.update_attribute(:data, file.download)
-      end
+    logger.info 'Processing FitnessActivity...'
+    FitnessActivity.atomically_process_files_in(dropbox, '/Apps/tapiriik') do |file|
+      logger.info "  -> #{file.name}"
+      FitnessActivity.create_from_file(file)
     end
   end
 
@@ -117,10 +89,6 @@ namespace :sync do
 
   desc 'Sync daily spreadsheet -> postgres'
   task daily: 'db:connect' do
-    require 'csv'
-    require 'date'
-    require 'open-uri'
-
     count = DailySpreadsheetEntry.count
 
     open(ENV['DAILY_TRACKING_URL']) do |f|

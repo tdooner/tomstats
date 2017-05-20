@@ -1,9 +1,12 @@
 require 'active_record'
+require 'csv'
 require 'date'
 require 'dotenv'
 require 'sentry-raven'
 
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+
+ENV['RAILS_ENV'] ||= 'development'
 
 if ENV['SENTRY_DSN']
   Raven.configure do |config|
@@ -14,6 +17,7 @@ end
 require_relative './lib/dropbox_client.rb'
 require_relative './lib/garmin_scraper.rb'
 require_relative './lib/lastfm_scraper.rb'
+require_relative './lib/mixins/atomic_dropbox_file.rb'
 require_relative './models/daily_spreadsheet_entry.rb'
 require_relative './models/fitness_activity.rb'
 require_relative './models/garmin_dump.rb'
