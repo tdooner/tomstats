@@ -5,7 +5,7 @@ backup() {
 }
 
 restore() {
-  dropdb tomstats
+  dropdb tomstats || true
   createdb tomstats
   pg_restore -O -d tomstats
 }
