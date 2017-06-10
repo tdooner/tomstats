@@ -98,15 +98,6 @@ namespace :sync do
     end
 
     puts "Imported #{DailySpreadsheetEntry.count - count} entries from daily spreadsheet."
-
-    begin
-      Timeout.timeout(30) do
-        MessageSender.send_daily_update
-      end
-    rescue => ex
-      puts "Error sending daily update: #{ex.inspect}"
-      Raven.capture_exception(ex)
-    end
   end
 
   desc 'Backfill garmin'
@@ -137,6 +128,19 @@ namespace :sync do
       end
 
     puts "Downloaded #{created} scrobbles."
+  end
+end
+
+namespace :notify do
+  task daily: 'db:connect' do
+    begin
+      Timeout.timeout(30) do
+        MessageSender.send_daily_update
+      end
+    rescue => ex
+      puts "Error sending daily update: #{ex.inspect}"
+      Raven.capture_exception(ex)
+    end
   end
 end
 

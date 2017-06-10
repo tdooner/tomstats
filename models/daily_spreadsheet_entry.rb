@@ -20,7 +20,6 @@ class DailySpreadsheetEntry < ActiveRecord::Base
       date = date - 1
     end
 
-
     row.each do |col, type|
       next if col == 'Timestamp'
 

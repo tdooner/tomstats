@@ -21,4 +21,6 @@ module Clockwork
   every(12.hours, 'sync:garmin')
   every(4.hours, 'sync:lastfm')
   every(24.hours, 'sync:daily')
+
+  every(24.hours, 'notify:daily', at: ['15:00']) # 8 AM PT
 end
