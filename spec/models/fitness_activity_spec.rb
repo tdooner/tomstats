@@ -14,9 +14,21 @@ XML
 describe FitnessActivity do
   describe 'on save' do
     it 'extracts the date from the <Activity>' do
-      activity = FitnessActivity.create(dropbox_rev: '123', data: SAMPLE)
+      activity = FitnessActivity.create(file_name: '2016-05-05 Running.tcx', data: SAMPLE)
       activity.reload
       expect(activity.date).to eq(Date.new(2016, 5, 15))
+    end
+  end
+
+  describe '.create_from_file' do
+    let(:dropbox_file) do
+      double('file', name: '2017-01-01 Running.tcx', download: SAMPLE)
+    end
+
+    subject { described_class.create_from_file(dropbox_file) }
+
+    it 'creates a FitnessActivity record' do
+      expect { subject }.to change { FitnessActivity.count }.by(1)
     end
   end
 end

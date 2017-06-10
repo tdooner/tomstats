@@ -22,7 +22,7 @@ describe TagProcessor::Processor do
 
     describe '#process' do
       it 'calls .process_fitness_activity once' do
-        activity = FitnessActivity.create(dropbox_rev: '123', data: '<!-- todo xml -->')
+        activity = FitnessActivity.create(file_name: '123', data: '<!-- todo xml -->')
         expect(processor_klass).to receive(:process_fitness_activity).with(activity).once
         processor.process
         processor.process

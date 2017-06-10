@@ -8,7 +8,7 @@ class MessageSender
   def self.send_daily_update
     last_spreadsheet = DailySpreadsheetEntry.order(:date).last.date
 
-    self.send("Last daily update: #{last_spreadsheet}")
+    self.send("Last daily spreadsheet: #{last_spreadsheet}")
   end
 
   private
