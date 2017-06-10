@@ -93,30 +93,11 @@ namespace :sync do
 
     open(ENV['DAILY_TRACKING_URL']) do |f|
       CSV.parse(f.read, col_sep: "\t", headers: :first_row) do |row|
-        date = if row['Timestamp'].include?(' ')
-                 DateTime.strptime(row['Timestamp'], '%m/%d/%Y %T')
-               else
-                 DateTime.strptime(row['Timestamp'], '%m/%d/%Y')
-               end
-
-        if date.hour <= 12
-          date = date - 1
-        end
-
-        [
-          ['How was today? [Good]', :how_good],
-          ['How was today? [Unique]', :how_unique],
-          ['How was today? [Productive]', :how_productive],
-          ['Who did you hang out with?', :hung_out_with],
-          ['How many glasses of alcohol today?', :glasses_alcohol],
-        ].each do |col, type|
-          entry = DailySpreadsheetEntry
-                    .where(date: date.to_date, entry_type: type)
-                    .first_or_create
-          entry.update_attributes(value: row[col])
-        end
+        DailySpreadsheetEntry.create_from_row(row)
       end
     end
+
+    puts "Imported #{DailySpreadsheetEntry.count - count} entries from daily spreadsheet."
 
     begin
       Timeout.timeout(30) do
@@ -126,8 +107,6 @@ namespace :sync do
       puts "Error sending daily update: #{ex.inspect}"
       Raven.capture_exception(ex)
     end
-
-    puts "Imported #{DailySpreadsheetEntry.count - count} entries from daily spreadsheet."
   end
 
   desc 'Backfill garmin'
