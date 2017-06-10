@@ -20,10 +20,16 @@ class PhoneUsageHistory < ActiveRecord::Base
       raise "Unknown duration value: #{row['Duration']}"
     end
 
+    parsed_time = if row['Time'].include?(' ')
+                    Time.strptime(row['Time'], "%l:%M:%S %p")
+                  else
+                    Time.strptime(row['Time'], "%H:%M:%S")
+                  end
+
     where(
       name: row['App name'],
       date: Date.strptime(row['Date'], "%m/%d/%y"),
-      time: Time.strptime(row['Time'], "%l:%M:%S %p"),
+      time: parsed_time,
       duration: "#{hours} hours #{minutes} minutes #{seconds} seconds",
     ).first_or_create
   end

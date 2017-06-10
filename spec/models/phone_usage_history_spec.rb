@@ -57,5 +57,18 @@ RSpec.describe PhoneUsageHistory do
           .to eq('01:00:14')
       end
     end
+
+    describe 'with a row from v4 format' do
+      let(:row) { '"Chrome","6/10/17","10:03:27","04:30"' }
+
+      it 'creates a row' do
+        expect { subject }
+          .to change { PhoneUsageHistory.count }
+          .by(1)
+
+        expect(PhoneUsageHistory.last.duration)
+          .to eq('00:04:30')
+      end
+    end
   end
 end
