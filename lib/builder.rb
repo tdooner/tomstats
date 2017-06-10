@@ -25,8 +25,8 @@ module Builder
     private
 
     def default_filename
-      name = self.class.name.underscore
-      File.expand_path("../../../build/data/#{name}.json", __FILE__)
+      name = self.class.name.demodulize.underscore
+      File.expand_path("../../build/data/#{name}.json", __FILE__)
     end
   end
 end
